@@ -28,27 +28,34 @@ def main():
 
     dt = 0
     player = Player(x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT/2)
-    # updateable.add(player)
-    # drawable.add(player)
 
     while True:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+
         screen.fill("black")
 
-        # for item in drawable:
-        #     item.draw(screen)
-        [item.draw(screen)  for item in drawable]
 
-        # for item in updateable:
-        #     item.update(dt)
-        [item.update(dt) for item in updateable]
+        [item.draw(screen) for item in drawable]
+
+        for item in updateable:
+            if item == player:
+                player.timer -= dt
+            item.update(dt)
+
+        # [item.update(dt) for item in updateable]
 
         for item in asteroids:
             if item.collision_check(player):
                 print("Game over!")
                 exit()
+
+            for shot in shots:
+                if shot.collision_check(item):
+                    item.split()
+                    shot.kill()
 
         pygame.display.flip()
         dt =  time_clock.tick(120) / 1000
